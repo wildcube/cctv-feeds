@@ -14,120 +14,116 @@
 
 /** @type {Array<{id: string, label: string, type: 'jpeg'|'mjpeg'|'hls', url: string, category?: string, interval?: number}>} */
 const cameras = [
-  // ── Main Roads WA traffic cameras (JPEG, publicly accessible) ──────────────
-  // Source: https://www.mainroads.wa.gov.au/traffic-travel/traffic-cameras/
+  // ── Main Roads WA traffic cameras ─────────────────────────────────────────
+  //
+  // URL format (confirmed via open-source TrafficCamPerth app on GitHub):
+  //   https://mrapps.mainroads.wa.gov.au/TrafficImages/{CameraID}.jpg
+  //
+  // HOW TO FIND CAMERA IDs:
+  //   1. Open https://travelmap.mainroads.wa.gov.au in your browser
+  //   2. Open DevTools → Network tab → filter by "jpg"
+  //   3. Click any camera icon on the map
+  //   4. The image request URL will reveal the CameraID (e.g. "CAM_0042")
+  //   5. Replace the placeholder IDs below with real ones
+  //
+  // The IDs below are placeholders — uncomment and fill in real IDs once found.
+  //
+  // { id: "mrwa-mitchell-north", label: "Mitchell Fwy North", type: "jpeg",
+  //   url: "https://mrapps.mainroads.wa.gov.au/TrafficImages/CAM_XXXX.jpg", category: "traffic" },
+  // { id: "mrwa-kwinana-north",  label: "Kwinana Fwy North",  type: "jpeg",
+  //   url: "https://mrapps.mainroads.wa.gov.au/TrafficImages/CAM_XXXX.jpg", category: "traffic" },
+
+  // ── Transport WA Coastal Cameras (Dept of Transport) ──────────────────────
+  //
+  // Source: https://www.transport.wa.gov.au/marine/charts-warnings-current-conditions/coast-cams
+  // URL pattern confirmed via clode.com source and worldcam.eu (active as of Feb 2026).
+  // Images refresh every ~60 seconds on the server side.
+  //
   {
-    id: "mrwa-mitchell-fwy-north",
-    label: "Mitchell Fwy North (Reid Hwy)",
+    id: "dotwa-trigg",
+    label: "Trigg Point",
     type: "jpeg",
-    url: "https://regionalroads.trafficstatus.wa.gov.au/api/cameras/MTC_NTH_MTC_RDHWY/image",
-    category: "traffic",
+    url: "https://www.transport.wa.gov.au/imarine/coastaldata/coastcam/livegfx/camtrigg/live.jpg",
+    category: "beach",
+    interval: 60000,
   },
   {
-    id: "mrwa-mitchell-fwy-south",
-    label: "Mitchell Fwy South (Karrinyup Rd)",
+    id: "dotwa-swanbourne",
+    label: "Swanbourne Beach",
     type: "jpeg",
-    url: "https://regionalroads.trafficstatus.wa.gov.au/api/cameras/MTC_STH_KARRRD/image",
-    category: "traffic",
+    url: "https://www.transport.wa.gov.au/imarine/coastaldata/coastcam/livegfx/camswanbourne/live.jpg",
+    category: "beach",
+    interval: 60000,
   },
   {
-    id: "mrwa-kwinana-fwy-north",
-    label: "Kwinana Fwy North (Mill Point Rd)",
+    id: "dotwa-fremantle",
+    label: "Fremantle Fishing Boat Harbour",
     type: "jpeg",
-    url: "https://regionalroads.trafficstatus.wa.gov.au/api/cameras/KWN_NTH_MILLPT/image",
-    category: "traffic",
+    url: "https://www.transport.wa.gov.au/imarine/coastaldata/coastcam/livegfx/camfremantle/live.jpg",
+    category: "beach",
+    interval: 60000,
   },
   {
-    id: "mrwa-kwinana-fwy-south",
-    label: "Kwinana Fwy South (Canning Hwy)",
+    id: "dotwa-lancelin",
+    label: "Lancelin Beach",
     type: "jpeg",
-    url: "https://regionalroads.trafficstatus.wa.gov.au/api/cameras/KWN_STH_CANNHWY/image",
-    category: "traffic",
+    url: "https://www.transport.wa.gov.au/imarine/coastaldata/coastcam/livegfx/camlancelin/live.jpg",
+    category: "beach",
+    interval: 60000,
   },
   {
-    id: "mrwa-graham-farmer-east",
-    label: "Graham Farmer Fwy East",
+    id: "dotwa-mandurah",
+    label: "Mandurah Ocean Marina",
     type: "jpeg",
-    url: "https://regionalroads.trafficstatus.wa.gov.au/api/cameras/GFF_EST_GFFWY/image",
-    category: "traffic",
-  },
-  {
-    id: "mrwa-great-eastern-hwy",
-    label: "Great Eastern Hwy (Midland)",
-    type: "jpeg",
-    url: "https://regionalroads.trafficstatus.wa.gov.au/api/cameras/GEH_MIDLAND/image",
-    category: "traffic",
-  },
-  {
-    id: "mrwa-stirling-hwy",
-    label: "Stirling Hwy (Cottesloe)",
-    type: "jpeg",
-    url: "https://regionalroads.trafficstatus.wa.gov.au/api/cameras/STH_COTTS/image",
-    category: "traffic",
-  },
-  {
-    id: "mrwa-roe-hwy",
-    label: "Roe Hwy (Welshpool Rd)",
-    type: "jpeg",
-    url: "https://regionalroads.trafficstatus.wa.gov.au/api/cameras/ROE_WPOOL/image",
-    category: "traffic",
+    url: "https://www.transport.wa.gov.au/imarine/coastaldata/coastcam/livegfx/cammandurah/live.jpg",
+    category: "beach",
+    interval: 60000,
   },
 
-  // ── GOandROAM / beach & harbour webcams (JPEG) ───────────────────────────
-  // Source: https://www.goandroam.com.au/webcams/
+  // ── Windy.com beach webcams ────────────────────────────────────────────────
+  //
+  // Confirmed webcam IDs from windy.com search results.
+  // URL format: https://images-webcams.windy.com/{last2ofID}/{ID}/current/full/{ID}.jpg
+  // Note: <img> tags don't send a Referer header — if Windy blocks these,
+  // a proxy is the fix: TODO /proxy/img?url=...
+  //
   {
-    id: "gar-scarborough-beach",
-    label: "Scarborough Beach",
+    id: "windy-scarborough-north",
+    label: "Scarborough Beach (North)",
     type: "jpeg",
-    url: "https://www.seabreeze.com.au/webcam/scarborough/image.jpg",
+    url: "https://images-webcams.windy.com/94/1203350394/current/full/1203350394.jpg",
     category: "beach",
     interval: 60000,
   },
   {
-    id: "gar-cottesloe-beach",
-    label: "Cottesloe Beach",
+    id: "windy-scarborough-west",
+    label: "Scarborough Beach (West)",
     type: "jpeg",
-    url: "https://www.seabreeze.com.au/webcam/cottesloe/image.jpg",
+    url: "https://images-webcams.windy.com/90/1203350490/current/full/1203350490.jpg",
     category: "beach",
     interval: 60000,
   },
   {
-    id: "gar-city-beach",
+    id: "windy-swanbourne-south",
+    label: "Swanbourne Beach (South)",
+    type: "jpeg",
+    url: "https://images-webcams.windy.com/64/1203350464/current/full/1203350464.jpg",
+    category: "beach",
+    interval: 60000,
+  },
+  {
+    id: "windy-city-beach",
     label: "City Beach",
     type: "jpeg",
-    url: "https://www.seabreeze.com.au/webcam/city-beach/image.jpg",
+    url: "https://images-webcams.windy.com/04/1385005204/current/full/1385005204.jpg",
     category: "beach",
     interval: 60000,
   },
-  {
-    id: "gar-fremantle-harbour",
-    label: "Fremantle Harbour",
-    type: "jpeg",
-    url: "https://www.portfremantle.com.au/webcam/image.jpg",
-    category: "city",
-    interval: 60000,
-  },
-  {
-    id: "gar-perth-cbd",
-    label: "Perth CBD (Hay St)",
-    type: "jpeg",
-    url: "https://www.seabreeze.com.au/webcam/perth/image.jpg",
-    category: "city",
-    interval: 60000,
-  },
 
-  // ── HLS example (replace with a real Perth stream when available) ──────────
+  // ── HLS streams ───────────────────────────────────────────────────────────
   // TODO: Add real Perth HLS streams here when sources are identified.
-  // Example structure:
-  // {
-  //   id: "hls-example",
-  //   label: "Example HLS Stream",
-  //   type: "hls",
-  //   url: "https://example.com/stream.m3u8",
-  //   // TODO: If CORS blocks hls.js fetching the .m3u8, route through a proxy:
-  //   //   url: "/proxy/hls?target=https://example.com/stream.m3u8"
-  //   category: "city",
-  // },
+  // If CORS blocks hls.js fetching the .m3u8, route through a proxy:
+  //   url: "/proxy/hls?target=https://origin.example.com/stream.m3u8"
 ];
 
 export default cameras;
